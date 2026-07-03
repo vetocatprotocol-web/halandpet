@@ -29,56 +29,62 @@ export const authOptions: any = {
             return null;
           }
 
+          console.log('[authorize] credentials diterima untuk username:', parsed.data.username);
+
           const user = await prisma.user.findUnique({ where: { username: parsed.data.username } });
           if (!user) {
             console.error('[authorize] User tidak ditemukan:', parsed.data.username);
             return null;
           }
+
           if (!user.isActive) {
-            console.error('[authorize] User tidak aktif:', parsed.data.username);
+            console.error('[authorize] User tidak aktif:', parsed.data.username, { isActive: user.isActive });
             return null;
           }
 
-        const now = new Date();
-        if (user.isLocked && user.lockedUntil && user.lockedUntil > now) {
-          return null;
-        }
+          const now = new Date();
+          if (user.isLocked) {
+            if (user.lockedUntil && user.lockedUntil > now) {
+              console.error('[authorize] User dikunci saat ini:', parsed.data.username, { lockedUntil: user.lockedUntil.toISOString(), failedPinAttempts: user.failedPinAttempts });
+              return null;
+            }
 
-        if (user.isLocked && (!user.lockedUntil || user.lockedUntil <= now)) {
-          await prisma.user.update({
-            where: { id: user.id },
-            data: {
-              isLocked: false,
-              lockedUntil: null,
-              failedPinAttempts: 0,
-            },
-          });
-        }
+            console.log('[authorize] User dikunci tetapi lock expired, akan dibuka kembali:', parsed.data.username);
+            await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                isLocked: false,
+                lockedUntil: null,
+                failedPinAttempts: 0,
+              },
+            });
+          }
 
-        let isValidPin = false;
-        try {
-          isValidPin = await bcrypt.compare(parsed.data.pin, user.pinHash);
-        } catch (error) {
-          console.error('[authorize] bcrypt.compare failed:', error, { username: parsed.data.username, pinHashLength: user.pinHash?.length });
-          return null;
-        }
+          let isValidPin = false;
+          try {
+            isValidPin = await bcrypt.compare(parsed.data.pin, user.pinHash);
+            console.log('[authorize] bcrypt.compare hasil:', isValidPin, { username: parsed.data.username, pinHashLength: user.pinHash?.length });
+          } catch (error) {
+            console.error('[authorize] bcrypt.compare failed:', error?.message ?? error, { username: parsed.data.username, pinHashLength: user.pinHash?.length });
+            return null;
+          }
 
-        if (!isValidPin) {
-          console.error('[authorize] PIN tidak valid untuk user:', parsed.data.username);
-          const nextAttempts = (user.failedPinAttempts ?? 0) + 1;
-          const shouldLock = nextAttempts >= 5;
+          if (!isValidPin) {
+            console.error('[authorize] PIN tidak valid untuk user:', parsed.data.username);
+            const nextAttempts = (user.failedPinAttempts ?? 0) + 1;
+            const shouldLock = nextAttempts >= 5;
 
-          await prisma.user.update({
-            where: { id: user.id },
-            data: {
-              failedPinAttempts: nextAttempts,
-              isLocked: shouldLock,
-              lockedUntil: shouldLock ? new Date(now.getTime() + 15 * 60 * 1000) : null,
-            },
-          });
+            await prisma.user.update({
+              where: { id: user.id },
+              data: {
+                failedPinAttempts: nextAttempts,
+                isLocked: shouldLock,
+                lockedUntil: shouldLock ? new Date(now.getTime() + 15 * 60 * 1000) : null,
+              },
+            });
 
-          return null;
-        }
+            return null;
+          }
 
         await prisma.user.update({
           where: { id: user.id },
