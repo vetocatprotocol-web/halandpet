@@ -18,8 +18,8 @@ const staffMenu = [
   { href: '/pos', label: 'POS', icon: ReceiptText, module: 'pos' as const },
   { href: '/billing', label: 'Tagihan', icon: Package2, module: 'billing' as const },
   { href: '/reports', label: 'Laporan', icon: BarChart3, module: 'reports' as const },
-  { href: '/users', label: 'Users', icon: ShieldCheck, module: 'users' as const },
   { href: '/settings', label: 'Pengaturan', icon: Settings, module: 'settings' as const },
+  { href: '/profile', label: 'Profil', icon: CircleUserRound, module: 'profile' as const },
   { href: '/profile', label: 'Profil', icon: CircleUserRound, module: 'profile' as const },
 ];
 
