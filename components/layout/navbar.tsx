@@ -1,11 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Search as SearchIcon } from 'lucide-react';
+import { LogOut, Search as SearchIcon } from 'lucide-react';
+import { signOut, useSession } from 'next-auth/react';
 import { NotificationBell } from './notification-bell';
 import { searchGlobal } from '@/actions/search';
 
 export function Navbar() {
+  const { data: session } = useSession();
+  const userName = session?.user?.name ?? 'Pengguna';
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Array<{ category: string; items: Array<{ id: string; title: string; subtitle: string; href: string }> }> | null>(null);
   const [message, setMessage] = useState('');
@@ -30,7 +33,7 @@ export function Navbar() {
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-[11px] uppercase tracking-[0.3em] text-zinc-500">Haland Petcare</p>
-          <h1 className="text-base font-semibold text-zinc-900">Halo, Admin</h1>
+          <h1 className="text-base font-semibold text-zinc-900">Halo, {userName}</h1>
         </div>
 
         <div className="flex flex-1 items-center gap-3">
@@ -47,6 +50,15 @@ export function Navbar() {
             </button>
           </form>
           <NotificationBell />
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: '/login' })}
+            className="flex items-center gap-2 rounded-full border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100"
+            aria-label="Keluar dari sistem"
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">Keluar</span>
+          </button>
         </div>
       </div>
 

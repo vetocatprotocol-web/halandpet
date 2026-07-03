@@ -72,6 +72,13 @@ export async function markNotificationRead(input: z.infer<typeof markReadSchema>
 }
 
 export async function createNotification(input: z.infer<typeof createNotificationSchema>) {
+  const session = await auth();
+  const actorRole = (session?.user as { role?: string } | undefined)?.role;
+
+  if (!session?.user?.id || !['OWNER', 'ADMIN_KLINIK', 'DOKTER'].includes(actorRole ?? '')) {
+    return { success: false, message: 'Anda tidak berwenang membuat notifikasi.', data: null };
+  }
+
   const parsed = createNotificationSchema.safeParse(input);
 
   if (!parsed.success) {

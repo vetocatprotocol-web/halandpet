@@ -24,6 +24,10 @@ export async function getReportSummary() {
     return { success: false, message: 'Tidak terautentikasi.', data: null };
   }
 
+  if (!['OWNER', 'ADMIN_KLINIK', 'DOKTER'].includes(actorRole ?? '')) {
+    return { success: false, message: 'Anda tidak berwenang melihat laporan.', data: null };
+  }
+
   const today = new Date();
   const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);

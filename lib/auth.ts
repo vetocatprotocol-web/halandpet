@@ -1,5 +1,4 @@
 import { getServerSession } from 'next-auth/next';
-import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
@@ -10,7 +9,7 @@ const loginSchema = z.object({
   pin: z.string().trim().min(1),
 });
 
-const authOptions: any = {
+export const authOptions: any = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',
@@ -105,7 +104,4 @@ const authOptions: any = {
 };
 
 export const auth = () => getServerSession(authOptions);
-export const signIn = async (username: string, pin: string) => {
-  return getServerSession(authOptions);
-};
 
