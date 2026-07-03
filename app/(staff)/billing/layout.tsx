@@ -1,0 +1,11 @@
+import { auth } from '@/lib/auth';
+import { requireModuleAccess } from '@/lib/permissions';
+
+export default async function BillingLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+  const role = (session?.user as { role?: string } | undefined)?.role;
+  
+  requireModuleAccess(role, 'billing');
+
+  return children;
+}

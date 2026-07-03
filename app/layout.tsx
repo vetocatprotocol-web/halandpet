@@ -1,15 +1,21 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import { auth } from '@/lib/auth';
+import { AuthSessionProvider } from '@/components/shared/auth-session-provider';
 
 export const metadata: Metadata = {
   title: 'Haland Petcare',
   description: 'Haland Petcare foundation setup',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthSessionProvider session={session}>{children}</AuthSessionProvider>
+      </body>
     </html>
   );
 }

@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt';
+import pkg from '@prisma/client';
+
+const { PrismaClient } = pkg;
 
 process.env.DATABASE_URL ??= 'file:./dev.db';
 
-const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {

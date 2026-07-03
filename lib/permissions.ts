@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+
 export type Role = 'OWNER' | 'ADMIN_KLINIK' | 'DOKTER' | 'CUSTOMER';
 
 export type ModuleName =
@@ -73,3 +75,14 @@ export function canPerformAction(role: Role, module: ModuleName, action: 'create
 
   return action === 'read';
 }
+
+/**
+ * Server-side helper to require access to a module.
+ * If user doesn't have access, redirects to /dashboard.
+ */
+export function requireModuleAccess(role: Role | undefined, module: ModuleName) {
+  if (!role || !canAccessModule(role as Role, module)) {
+    redirect('/dashboard');
+  }
+}
+
