@@ -3,8 +3,6 @@ import pkg from '@prisma/client';
 
 const { PrismaClient } = pkg;
 
-process.env.DATABASE_URL ??= 'file:./dev.db';
-
 const prisma = new PrismaClient();
 
 async function main() {
