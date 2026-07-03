@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth/next';
 import Credentials from 'next-auth/providers/credentials';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from './db';
 
@@ -22,11 +22,22 @@ export const authOptions: any = {
         pin: { label: 'PIN', type: 'password' },
       },
       async authorize(credentials) {
-        const parsed = loginSchema.safeParse(credentials);
-        if (!parsed.success) return null;
+        try {
+          const parsed = loginSchema.safeParse(credentials);
+          if (!parsed.success) {
+            console.error('[authorize] Validasi schema gagal:', parsed.error);
+            return null;
+          }
 
-        const user = await prisma.user.findUnique({ where: { username: parsed.data.username } });
-        if (!user || !user.isActive) return null;
+          const user = await prisma.user.findUnique({ where: { username: parsed.data.username } });
+          if (!user) {
+            console.error('[authorize] User tidak ditemukan:', parsed.data.username);
+            return null;
+          }
+          if (!user.isActive) {
+            console.error('[authorize] User tidak aktif:', parsed.data.username);
+            return null;
+          }
 
         const now = new Date();
         if (user.isLocked && user.lockedUntil && user.lockedUntil > now) {
@@ -44,8 +55,16 @@ export const authOptions: any = {
           });
         }
 
-        const isValidPin = await bcrypt.compare(parsed.data.pin, user.pinHash);
+        let isValidPin = false;
+        try {
+          isValidPin = await bcrypt.compare(parsed.data.pin, user.pinHash);
+        } catch (error) {
+          console.error('[authorize] bcrypt.compare failed:', error, { username: parsed.data.username, pinHashLength: user.pinHash?.length });
+          return null;
+        }
+
         if (!isValidPin) {
+          console.error('[authorize] PIN tidak valid untuk user:', parsed.data.username);
           const nextAttempts = (user.failedPinAttempts ?? 0) + 1;
           const shouldLock = nextAttempts >= 5;
 
@@ -70,6 +89,7 @@ export const authOptions: any = {
           },
         });
 
+        console.log('[authorize] Login berhasil untuk user:', parsed.data.username, 'dengan role:', user.role);
         return {
           id: user.id,
           name: user.name,
@@ -77,6 +97,10 @@ export const authOptions: any = {
           role: user.role,
           mustChangePin: user.mustChangePin,
         };
+        } catch (error) {
+          console.error('[authorize] Error tidak terduga:', error);
+          return null;
+        }
       },
     }),
   ],

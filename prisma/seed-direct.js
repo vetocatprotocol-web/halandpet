@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { DatabaseSync } = require('node:sqlite');
 
 const db = new DatabaseSync('./prisma/dev.db');
