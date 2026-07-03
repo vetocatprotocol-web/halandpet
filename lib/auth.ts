@@ -64,7 +64,7 @@ export const authOptions: any = {
           try {
             isValidPin = await bcrypt.compare(parsed.data.pin, user.pinHash);
             console.log('[authorize] bcrypt.compare hasil:', isValidPin, { username: parsed.data.username, pinHashLength: user.pinHash?.length });
-          } catch (error) {
+          } catch (error: any) {
             console.error('[authorize] bcrypt.compare failed:', error?.message ?? error, { username: parsed.data.username, pinHashLength: user.pinHash?.length });
             return null;
           }
