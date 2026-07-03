@@ -18,7 +18,7 @@ export default function ProfilePage() {
 
   async function loadProfile() {
     const result = await getProfileData();
-    if (result.success) {
+    if (result.success && result.data) {
       setUser(result.data.user);
       setForm({ name: result.data.user.name, phone: result.data.user.phone ?? '' });
     } else {
@@ -30,7 +30,7 @@ export default function ProfilePage() {
     event.preventDefault();
     const result = await updateProfile(form);
     setMessage(result.message ?? 'Profil berhasil disimpan.');
-    if (result.success) {
+    if (result.success && result.data) {
       setUser(result.data.user);
     }
   }

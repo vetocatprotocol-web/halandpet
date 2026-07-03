@@ -30,11 +30,11 @@ const cancelAppointmentSchema = z.object({
   id: z.string().min(1),
 });
 
-function getActorRole(session: Awaited<ReturnType<typeof auth>>) {
+function getActorRole(session: any) {
   return (session?.user as { role?: string } | undefined)?.role;
 }
 
-function getActorId(session: Awaited<ReturnType<typeof auth>>) {
+function getActorId(session: any) {
   return session?.user?.id;
 }
 

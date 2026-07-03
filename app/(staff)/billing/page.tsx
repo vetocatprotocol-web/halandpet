@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { CreditCard, FileInvoice, Lock, Printer, Plus, Trash2, Wallet } from 'lucide-react';
+import { CreditCard, FileIcon, Lock, Printer, Plus, Trash2, Wallet } from 'lucide-react';
 import { DataTable } from '@/components/shared/data-table';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { cancelInvoice, createInvoice, getInvoiceLookups, listInvoices, recordInvoicePayment } from '@/actions/invoice';
@@ -45,7 +45,7 @@ export default function BillingPage() {
   async function loadData() {
     const [lookupResult, invoicesResult] = await Promise.all([getInvoiceLookups(), listInvoices()]);
     if (lookupResult.success) setCustomers(lookupResult.customers ?? []);
-    if (invoicesResult.success) setInvoices(invoicesResult.invoices ?? []);
+    if (invoicesResult.success) setInvoices((invoicesResult.invoices ?? []).map((inv: any) => ({ ...inv, date: (inv.date as Date).toISOString() })));
   }
 
   const selectedInvoice = useMemo(() => invoices.find((invoice) => invoice.id === selectedInvoiceId) ?? null, [invoices, selectedInvoiceId]);
@@ -158,7 +158,7 @@ export default function BillingPage() {
             <h1 className="text-xl font-semibold text-zinc-900">Invoice gabungan</h1>
           </div>
           <div className="flex items-center gap-2 text-zinc-700">
-            <FileInvoice className="h-5 w-5" />
+            <FileIcon className="h-5 w-5" />
             <span className="text-sm">Owner & Admin Klinik</span>
           </div>
         </div>

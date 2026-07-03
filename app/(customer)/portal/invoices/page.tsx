@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Download, FileInvoice, Printer } from 'lucide-react';
+import { Download, FileIcon, Printer } from 'lucide-react';
 import { DataTable } from '@/components/shared/data-table';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { getPortalInvoices } from '@/actions/invoice';
@@ -27,7 +27,7 @@ export default function CustomerInvoicesPage() {
   async function loadInvoices() {
     const result = await getPortalInvoices();
     if (result.success) {
-      setInvoices(result.invoices ?? []);
+      setInvoices((result.invoices ?? []).map((inv: any) => ({ ...inv, date: (inv.date as Date).toISOString() })));
     }
   }
 
@@ -53,7 +53,7 @@ export default function CustomerInvoicesPage() {
             <h1 className="text-xl font-semibold text-zinc-900">Riwayat invoice Anda</h1>
           </div>
           <div className="flex items-center gap-2 text-zinc-700">
-            <FileInvoice className="h-5 w-5" />
+            <FileIcon className="h-5 w-5" />
             <span className="text-sm">Read-only</span>
           </div>
         </div>

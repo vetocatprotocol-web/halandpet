@@ -103,5 +103,5 @@ export const authOptions: any = {
   },
 };
 
-export const auth = () => getServerSession(authOptions);
+export const auth = () => getServerSession(authOptions) as Promise<any>;
 

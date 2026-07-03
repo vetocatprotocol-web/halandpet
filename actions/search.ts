@@ -41,38 +41,38 @@ export async function searchGlobal(input: z.infer<typeof searchSchema>) {
   const q = parsed.data.query;
   const customerFilter = {
     OR: [
-      { name: { contains: q, mode: 'insensitive' } },
-      { phone: { contains: q, mode: 'insensitive' } },
+      { name: { contains: q } },
+      { phone: { contains: q } },
     ],
   };
 
   const petFilter = {
     OR: [
-      { name: { contains: q, mode: 'insensitive' } },
-      { species: { contains: q, mode: 'insensitive' } },
-      { breed: { contains: q, mode: 'insensitive' } },
+      { name: { contains: q } },
+      { species: { contains: q } },
+      { breed: { contains: q } },
     ],
   };
 
   const appointmentFilter = {
     OR: [
-      { pet: { is: { name: { contains: q, mode: 'insensitive' } } } },
-      { customer: { is: { name: { contains: q, mode: 'insensitive' } } } },
+      { pet: { is: { name: { contains: q } } } },
+      { customer: { is: { name: { contains: q } } } },
     ],
   };
 
   const invoiceFilter = {
     OR: [
-      { invoiceNumber: { contains: q, mode: 'insensitive' } },
-      { customer: { is: { name: { contains: q, mode: 'insensitive' } } } },
+      { invoiceNumber: { contains: q } },
+      { customer: { is: { name: { contains: q } } } },
     ],
   };
 
   const productFilter = {
     OR: [
-      { name: { contains: q, mode: 'insensitive' } },
-      { sku: { contains: q, mode: 'insensitive' } },
-      { barcode: { contains: q, mode: 'insensitive' } },
+      { name: { contains: q } },
+      { sku: { contains: q } },
+      { barcode: { contains: q } },
     ],
   };
 
@@ -105,8 +105,8 @@ export async function searchGlobal(input: z.infer<typeof searchSchema>) {
 
   const medicalRecords = await prisma.medicalRecord.findMany({
     where: isDoctor(actorRole)
-      ? { doctorId: actorId, OR: [{ diagnosis: { contains: q, mode: 'insensitive' } }, { treatment: { contains: q, mode: 'insensitive' } }, { prescription: { contains: q, mode: 'insensitive' } }] }
-      : { OR: [{ diagnosis: { contains: q, mode: 'insensitive' } }, { treatment: { contains: q, mode: 'insensitive' } }, { prescription: { contains: q, mode: 'insensitive' } }] },
+      ? { doctorId: actorId, OR: [{ diagnosis: { contains: q } }, { treatment: { contains: q } }, { prescription: { contains: q } }] }
+      : { OR: [{ diagnosis: { contains: q } }, { treatment: { contains: q } }, { prescription: { contains: q } }] },
     orderBy: { date: 'desc' },
     select: { id: true, diagnosis: true, treatment: true, pet: { select: { name: true } } },
     take: 5,

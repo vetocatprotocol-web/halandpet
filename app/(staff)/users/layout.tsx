@@ -5,7 +5,7 @@ export default async function UsersLayout({ children }: { children: React.ReactN
   const session = await auth();
   const role = (session?.user as { role?: string } | undefined)?.role;
   
-  requireModuleAccess(role, 'users');
+  requireModuleAccess(role as any, 'users');
 
   return children;
 }

@@ -6,7 +6,7 @@ import { BarChart3, CalendarDays, CircleUserRound, House, Package2, ScrollText, 
 import { canAccessModule } from '@/lib/permissions';
 
 interface SidebarProps {
-  role: string;
+  role: any;
 }
 
 const staffMenu = [

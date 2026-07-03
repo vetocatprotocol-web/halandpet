@@ -5,7 +5,7 @@ export default async function BillingLayout({ children }: { children: React.Reac
   const session = await auth();
   const role = (session?.user as { role?: string } | undefined)?.role;
   
-  requireModuleAccess(role, 'billing');
+  requireModuleAccess(role as any, 'billing');
 
   return children;
 }

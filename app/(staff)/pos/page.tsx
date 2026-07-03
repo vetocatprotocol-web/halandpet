@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Banknote, Barcode, CheckCircle2, CreditCard, Printer, Search, ShoppingBag, UserPlus } from 'lucide-react';
 import { DataTable } from '@/components/shared/data-table';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { createPosSale, getInvoiceLookups, searchProducts } from '@/actions/pos';
+import { createPosSale, searchProducts } from '@/actions/pos';
+import { getInvoiceLookups } from '@/actions/invoice';
 
 type ProductRow = {
   id: string;

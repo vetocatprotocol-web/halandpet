@@ -29,7 +29,7 @@ const updatePetHotelBookingSchema = petHotelBookingSchema.extend({
 
 const petHotelLogSchema = z.object({
   bookingId: z.string().min(1),
-  type: z.enum(['FEEDING', 'MEDICATION', 'ACTIVITY', 'CONDITION', 'PHOTO']),
+  type: z.enum(['FEEDING', 'MEDICINE', 'NOTE']),
   description: z.string().max(500),
   photo: z.string().optional(),
 });
@@ -102,7 +102,7 @@ export async function updatePetHotelRoom(input: z.infer<typeof updatePetHotelRoo
 
   const room = await prisma.petHotelRoom.update({
     where: { id: parsed.data.id },
-    data: { name: parsed.data.name, status: parsed.data.status ?? undefined },
+    data: { name: parsed.data.name, status: (parsed.data.status ?? undefined) as any },
   });
 
   revalidatePath('/pet-hotel');
@@ -237,7 +237,7 @@ export async function updatePetHotelBooking(input: z.infer<typeof updatePetHotel
       roomId: parsed.data.roomId || null,
       checkInDate: new Date(parsed.data.checkInDate),
       checkOutDate: new Date(parsed.data.checkOutDate),
-      status: parsed.data.status ?? undefined,
+      status: (parsed.data.status ?? undefined) as any,
     },
   });
 
@@ -277,7 +277,7 @@ export async function cancelPetHotelBooking(id: string) {
 
   await prisma.petHotelBooking.update({
     where: { id },
-    data: { status: 'CANCELLED' },
+    data: { status: 'CANCELLED' as any },
   });
 
   revalidatePath('/pet-hotel');

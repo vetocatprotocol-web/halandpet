@@ -16,7 +16,7 @@ export default function ReportsPage() {
   async function loadReport() {
     const result = await getReportSummary();
     if (result.success) {
-      setSummary(result.data?.summary ?? null);
+      setSummary(((result.data?.summary) as unknown) as ReportSummary ?? null);
     } else {
       setMessage(result.message ?? 'Gagal memuat laporan.');
     }

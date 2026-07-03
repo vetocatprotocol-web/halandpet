@@ -26,7 +26,7 @@ export default function SettingsPage() {
 
   async function loadData() {
     const result = await getSettingsData();
-    if (result.success) {
+    if (result.success && result.data) {
       const data = result.data;
       setSettings(data.settings);
       setAuditLogs(data.auditLogs ?? []);
@@ -60,6 +60,11 @@ export default function SettingsPage() {
       setMessage(result.message ?? 'Gagal membuat backup.');
       return;
     }
+    if (!result.data) {
+      setMessage('Backup gagal: data kosong.');
+      return;
+    }
+
     const blob = new Blob([result.data.content], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');

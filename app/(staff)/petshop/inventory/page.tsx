@@ -68,7 +68,7 @@ export default function InventoryPage() {
 
     const result = await listStockMovements(selectedProduct);
     if (result.success) {
-      setMovements(result.movements);
+      setMovements(result.movements ?? []);
       setShowMovements(true);
     }
   }

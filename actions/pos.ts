@@ -50,9 +50,9 @@ export async function searchProducts(input: z.infer<typeof productSearchSchema>)
   const products = await prisma.product.findMany({
     where: {
       OR: [
-        { name: { contains: parsed.data.query, mode: 'insensitive' } },
-        { sku: { contains: parsed.data.query, mode: 'insensitive' } },
-        { barcode: { contains: parsed.data.query, mode: 'insensitive' } },
+        { name: { contains: parsed.data.query } },
+        { sku: { contains: parsed.data.query } },
+        { barcode: { contains: parsed.data.query } },
       ],
     },
     orderBy: { name: 'asc' },

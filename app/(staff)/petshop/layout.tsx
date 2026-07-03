@@ -5,7 +5,7 @@ export default async function PetshopLayout({ children }: { children: React.Reac
   const session = await auth();
   const role = (session?.user as { role?: string } | undefined)?.role;
   
-  requireModuleAccess(role, 'petshop');
+  requireModuleAccess(role as any, 'petshop');
 
   return children;
 }

@@ -5,7 +5,7 @@ export default async function SettingsLayout({ children }: { children: React.Rea
   const session = await auth();
   const role = (session?.user as { role?: string } | undefined)?.role;
   
-  requireModuleAccess(role, 'settings');
+  requireModuleAccess(role as any, 'settings');
 
   return children;
 }
